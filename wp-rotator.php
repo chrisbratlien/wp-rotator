@@ -1,14 +1,10 @@
 <?php
-/**
- * @package WP_Rotator
- * @version 0.1.1
- */
 /*
 Plugin Name: WP Rotator
 Plugin URI: http://chrisbratlien.com/wp-rotator
-Description: Rotator for featured images. Control which posts to rotate with Query Vars setting. Slide or cross-fade animation style. Control animate/rest delay times. Toggle info box and override clicktrough URLs at a per-post level. Override the CSS in your theme's functions.php file.
-Author: Chris Bratlien, Bill Erickson
+Description: Rotator for featured images. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses.
 Version: 0.1.1
+Author: Chris Bratlien, Bill Erickson
 Author URI: http://chrisbratlien.com/wp-rotator
 */
 
