@@ -186,8 +186,8 @@ function wp_rotator_admin_menu() {
 function wp_rotator_add_jquery() {
   wp_enqueue_script('jquery');
 }
-//add_action('init','wp_rotator_add_jquery');
-//add_action('admin_init','wp_rotator_add_jquery');
+add_action('init','wp_rotator_add_jquery');
+add_action('admin_init','wp_rotator_add_jquery');
 
 
 function wp_rotator_javascript() {
@@ -528,6 +528,6 @@ function wp_rotator() {
 }
 add_action('wp_rotator','wp_rotator');
 
-/////update_option('wp_rotator_options',false);
+/////update_option('wp_rotator_options',false); /// FOR DEBUG ONLY. DELETES YOUR ROTATOR SETTINGS, CAREFUL!
 
 ?>
