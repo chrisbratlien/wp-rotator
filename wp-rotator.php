@@ -1,7 +1,7 @@
 <?php
 /**
  * @package WP_Rotator
- * @version 0.1
+ * @version 0.1.1
  */
 /*
 Plugin Name: WP Rotator
@@ -180,6 +180,7 @@ function wp_rotator_admin_menu() {
     </tr>
   </table>
 
+<?php ///pp(get_option('wp_rotator_options'));?>
 <h4>Preview</h4>
 <?php do_action('wp_rotator'); ?>
 <?php
@@ -188,8 +189,8 @@ function wp_rotator_admin_menu() {
 function wp_rotator_add_jquery() {
   wp_enqueue_script('jquery');
 }
-add_action('init','wp_rotator_add_jquery');
-add_action('admin_init','wp_rotator_add_jquery');
+//add_action('init','wp_rotator_add_jquery');
+//add_action('admin_init','wp_rotator_add_jquery');
 
 
 function wp_rotator_javascript() {
@@ -396,7 +397,8 @@ add_action('admin_head','custom_wp_rotator_css');
 
   <?php else: ?>
     display: inline;
-    position: relative;  
+    position: relative;
+    float: left;
   <?php endif; ?>
   /***
    border: 1px solid red;
@@ -471,7 +473,7 @@ function wp_rotator() {
 ?>
   <div class="wp-rotator-wrap">
   	<div class="pane">
-      <ul class="elements">
+      <ul class="elements" style="width: 5000px">
         <?php
         
           /////$foo = get_posts(wp_rotator_option('query_vars'));
@@ -529,6 +531,6 @@ function wp_rotator() {
 }
 add_action('wp_rotator','wp_rotator');
 
-update_option('wp_rotator_options',false);
+/////update_option('wp_rotator_options',false);
 
 ?>
