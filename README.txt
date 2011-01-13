@@ -23,3 +23,17 @@ Go to Dashboard > Settings > WP Rotator
 Add the following PHP code to your template
 
 do_action('wp_rotator');
+
+== Changelog ==
+
+= 0.2.1 =
+* fixed z-index issue affecting clickthrough URLs
+* Put Javascript into WPROTATOR namespace to prevent conflicts
+* added [wp_rotator] shortcode
+* added new filter hook: wp_rotator_featured_cell_markup to allow further customization
+* added customization hook examples to Admin page
+
+== Upgrade Notice ==
+
+= 0.2.1 =
+This version fixes a z-index issue affecting clickthrough URLs. It also uses a cleaner Javascript namespace

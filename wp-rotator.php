@@ -176,10 +176,38 @@ function wp_rotator_admin_menu() {
       <td>Clicking the featured image will send the visitor to this URL</td>
     </tr>
   </table>
-
-<?php ///pp(get_option('wp_rotator_options'));?>
-<h4>Preview</h4>
-<?php do_action('wp_rotator'); ?>
+  <h4>Preview</h4>
+  <?php do_action('wp_rotator'); ?>
+  
+  <h3>Plugin Customization Hooks (Edit your theme's functions.php)</h3>
+  <strong>Use your own Javascript</strong>
+  <pre>
+    // Admin preview (this page you're on now): 
+    remove_action('admin_head','wp_rotator_javascript'
+    add_action('admin_head','custom_rotator_javascript');
+  </pre>
+  <pre>
+    // Public facing:
+    remove_action('wp_head','wp_rotator_javascript'
+    add_action('wp_head','custom_rotator_javascript');
+  </pre>    
+  <strong>Use your own CSS</strong>
+  <pre>
+    // Admin preview (this page you're on now): 
+    remove_action('admin_head','wp_rotator_css'
+    add_action('admin_head','custom_rotator_css');
+  </pre>
+  <pre>
+  // Public facing:
+    remove_action('wp_head','wp_rotator_css'
+    add_action('wp_head','custom_rotator_css');
+  </pre>  
+  <strong>Use your own Featured Cell Markup</strong>
+  <pre>
+    remove_filter('wp_rotator_featured_cell_markup','wp_rotator_featured_cell_markup');
+    add_filter('wp_rotator_featured_cell_markup','custom_rotator_featured_cell_markup');
+  </pre>
+<?php //DEBUG///pp(get_option('wp_rotator_options'));?>
 <?php
 }
 
@@ -197,10 +225,11 @@ function wp_rotator_javascript() {
 <script type="text/javascript" src="<?php bloginfo('url'); ?>/wp-content/plugins/wp-rotator/jquery.scrollTo.js"></script>
 <script type="text/javascript">
 
-  var r = false; // global rotator object (for debugging)
-  var elementsWidth = false; //global for debugging
+  var WPROTATOR = {}; //namespace
+  WPROTATOR.instance1 = false;
+  WPROTATOR.elementsWidth = false; //global for debugging
 
-  var rotator = function() {
+  WPROTATOR.createRotator = function() {
     var that = {};
     that.init = function() {
       that.currentOffset = 0;
@@ -219,84 +248,74 @@ function wp_rotator_javascript() {
       /////console.log(that.candidates);
       
       that.totalPages = that.candidates.length;
-      
+
+    /***      
       that.nexts = [];
       for (var i = 0; i < that.totalPages; i++) {
         that.nexts[i] = i + 1;
       }
       that.nexts[i-1] = 0;
+    *****/
+
+     that.nexts = [];
+      that.prevs = [];
+      for (var i = 0; i < that.totalPages; i++) {
+        that.nexts[i] = i + 1;
+        that.prevs[i] = (i + that.totalPages - 1 ) % that.totalPages;
+      }
+      that.nexts[i-1] = 0;  
     }
 
-
-
     that.gotoPage = function(offset) {
+      var newPage = that.pageJQ(offset);
+      var oldPage = that.pageJQ(that.currentOffset);
+
       if (that.animateStyle == 'slide') {
         that.slideToPage(offset);
       }
       else {
         that.fadeToPage(offset);
       }
-    };
 
+      oldPage.removeClass('current-cell');
+      newPage.addClass('current-cell');
 
-    that.slideToPage = function(offset) {
-      jQuery('.pane').scrollTo(that.candidates[offset],{axis: 'x',duration: that.slideDelay});    
+      jQuery('.pager-a li.current').removeClass('current');
+      jQuery('.pager-a #pager-' + offset).addClass('current');
+      
       that.currentOffset = offset;
     };
 
 
+    that.pageJQ = function(i) {
+      return jQuery(that.candidates[i]);
+    };
+
+    that.slideToPage = function(offset) {
+      jQuery('.pane').scrollTo(that.candidates[offset],{axis: 'x',duration: that.slideDelay});    
+    };
 
     that.fadeToPage = function(offset) {
       //jQuery('.pane').fadeOut(that.slideDelay/2, function() {
-        var newPage = jQuery(that.candidates[offset]);
-        var oldPage = jQuery(that.candidates[that.currentOffset]);
-
-
+        var newPage = that.pageJQ(offset);//jQuery(that.candidates[offset]);
+        var oldPage = that.pageJQ(that.currentOffset);//jQuery(that.candidates[that.currentOffset]);
         //////jQuery('.featured-cell').hide();
         
         newPage.fadeTo(that.slideDelay/2,1,function(){
           oldPage.fadeTo(that.slideDelay/2,0);
         });
-
-        /*
-        newPage.fadeTo(1000,0.5,function() {
-          oldPage.fadeTo(1000,0.5,function(){
-            newPage.fadeTo(1000,1,function(){
-              oldPage.fadeTo(1000,0);
-            });
-          });
-        });
-        */
         
-        
-        //jQuery('.pane').fadeIn(that.slideDelay/2);
-      
-        jQuery('.pager-a li.current').removeClass('current');
-        jQuery('.pager-a #pager-' + offset).addClass('current');
-			//});
-
-      that.currentOffset = offset;
-    };
-
-    that.fadeToPageV1 = function(offset) {
-      jQuery('.pane').fadeOut(that.slideDelay/2, function() {
-        var newPage = jQuery(that.candidates[offset]);
-
-        jQuery('.featured-cell').hide();
-        jQuery(that.candidates[offset]).show();
-        jQuery('.pane').fadeIn(that.slideDelay/2);
-      
-        jQuery('.pager-a li.current').removeClass('current');
-        jQuery('.pager-a #pager-' + offset).addClass('current');
-			});
-
-      that.currentOffset = offset;
+        //jQuery('.pane').fadeIn(that.slideDelay/2);      
     };
 
   
     that.nexter = function(offset) {
       return that.nexts[that.currentOffset];    
     };
+    
+    that.prever = function(offset) {
+      return that.prevs[that.currentOffset];
+    }
 
     that.rotate = function() {
       if (that.autoPage) {
@@ -305,6 +324,21 @@ function wp_rotator_javascript() {
       }
     }
     
+    that.goNext = function() {
+      that.autoPage = false;
+      //// allow rightmost to rotate to leftmost when next hit //if (that.currentOffset == that.totalPages - 1) { return; }
+      that.gotoPage(that.nexter());
+    };
+
+    that.goPrev = function() {
+      that.autoPage = false;
+      /// allow leftmost to rotate to rightmost when prev hit ////  if (that.currentOffset == 0) { return; }
+      that.gotoPage(that.prever());
+    };
+
+
+
+
     that.start = function() {
       setTimeout(function() { that.rotate(); },that.sliderAtRestDelay);    
     }
@@ -315,30 +349,22 @@ function wp_rotator_javascript() {
   };
 
   jQuery(document).ready(function() {
-
-    r = rotator(); //global for debugging purposes (no 'var').
-    
-    elementsWidth = <?php echo $bsd_pane_width; ?> * r.totalPages; 
-    
-    jQuery('.wp-rotator-wrap .elements').css('width',elementsWidth.toString() +'px');
-
-    r.start();
-    
+    WPROTATOR.instance1 = WPROTATOR.createRotator();
+    WPROTATOR.elementsWidth = <?php echo $bsd_pane_width; ?> * WPROTATOR.instance1.totalPages; 
+    jQuery('.wp-rotator-wrap .elements').css('width',WPROTATOR.elementsWidth.toString() +'px');
+    WPROTATOR.instance1.start();
     jQuery('.pager-a li').click(function() {
       var offset = this.id.replace('pager-','');
-      r.autoPage = false;
-      r.gotoPage(offset);
-    });
-    
+      WPROTATOR.instance1.autoPage = false;
+      WPROTATOR.instance1.gotoPage(offset);
+    });  
   });
-
 </script>
 <?php
 }
 
 add_action('wp_head','wp_rotator_javascript');
 add_action('admin_head','wp_rotator_javascript');
-
 
 function wp_rotator_css() {
   global $bsd_pane_width;
@@ -440,6 +466,8 @@ add_action('admin_head','custom_wp_rotator_css');
   
 }
 
+.wp-rotator-wrap .current-cell { z-index: 500; }
+
 
 #bsdLogger {
   position: absolute;
@@ -463,71 +491,98 @@ add_action('admin_head','custom_wp_rotator_css');
 add_action('wp_head','wp_rotator_css');
 add_action('admin_head','wp_rotator_css');
 
-function wp_rotator() { 
+
+
+function wp_rotator_markup() { 
   global $bsd_pane_width;
   global $bsd_pane_height;
   $animate_style = wp_rotator_option('animate_style');
-?>
-  <div class="wp-rotator-wrap">
-  	<div class="pane">
-      <ul class="elements" style="width: 5000px">
-        <?php
-        
-          /////$foo = get_posts(wp_rotator_option('query_vars'));
-          
-          ////pp($foo);
+
+  $result = '';
+  $result .= '<div class="wp-rotator-wrap">';
+  $result .= '  <div class="pane">';
+  $result .= '    <ul class="elements" style="width: 5000px">';
         
         
-          $featured = new WP_Query(wp_rotator_option('query_vars'));
-          ///pp($featured);
-          
-          
-          
-          $first = true;
-          while ($featured->have_posts()) : $featured->the_post(); 
-            global $post; 
-            //pp($post);
-            $clickthrough_url = get_post_meta($post->ID,'url',true);
-            $show_info = get_post_meta($post->ID,'show_info',true);
-            if (empty($clickthrough_url)) {
-              $clickthrough_url = get_permalink($post->ID);
-            }
-            
-            $foo = get_posts('post_type=attachment&post_parent=' . $post->ID);
-            $image_url = $foo[0]->guid;
-            ///////pp($post_image);
-            
-            ?>
-            <li class="featured-cell" 
-              <?php 
-                if ($animate_style == 'fade') {
-                  if ($first) { 
-                    $first = false; 
-                  } 
-                  else { 
-                    echo 'style="display:none;"';
-                  } 
-                }
-              ?>>
-                    <a href="<?php echo $clickthrough_url; ?>">
-                      <img width="<?php echo $bsd_pane_width; ?>" height="<?php echo $bsd_pane_height; ?>" src="<?php echo $image_url; ?>" />
-                    </a>
-                    <?php if ($show_info == true): ?>
-                      <div class="info">
-                        <h1><?php the_title(); ?></h1>
-                        <p><?php the_excerpt();?></p>
-                      </div>
-                    <?php endif; ?>
-            </li><!-- featured-cell -->
-        <?php endwhile; ?>
-        <?php wp_reset_query(); ?>
-      </ul><!-- elements -->
-  	</div><!-- #feature_box_rotator .pane -->
-  </div><!-- wp-rotator-wrap -->
-<?php 
+  $featured = new WP_Query(wp_rotator_option('query_vars'));
+  ///pp($featured);
+  
+  $inner = '';
+  
+  $first = true;
+  while ($featured->have_posts()) : $featured->the_post(); 
+    global $post; 
+    $inner .= apply_filters('wp_rotator_featured_cell_markup','');
+  endwhile;
+  
+  ////wp_reset_query();
+  
+  $result .= $inner;
+  $result .= '      </ul><!-- elements -->';
+  $result .= '  	</div><!-- #feature_box_rotator .pane -->';
+  $result .= '  </div><!-- wp-rotator-wrap -->';
+ 
+  return $result;
 }
+
+
+function wp_rotator_featured_cell_markup($result) {
+  global $bsd_pane_width;
+  global $bsd_pane_height;
+
+    global $post;
+    ///pp($post);
+    $clickthrough_url = get_post_meta($post->ID,'url',true);
+    $show_info = get_post_meta($post->ID,'show_info',true);
+    if (empty($clickthrough_url)) {
+      $clickthrough_url = get_permalink($post->ID);
+    }
+    
+    $foo = get_posts('post_type=attachment&post_parent=' . $post->ID);
+    $image_url = $foo[0]->guid;
+    ///////pp($post_image);
+    
+    $result .= '<li class="featured-cell"';
+        if ($animate_style == 'fade') {
+          if ($first) { 
+            $first = false; 
+          } 
+          else { 
+            $result .= 'style="display:none;"';
+          } 
+        }
+    $result .= '>';
+    $result .= '<a href="' . $clickthrough_url . '">';
+    $result .= '  <img width="' . $bsd_pane_width . '" height="' . $bsd_pane_height . '" src="' . $image_url . '" />';
+    $result .= '</a>';
+    
+    if ($show_info == true):
+      $result .= '          <div class="info">';
+      $result .= '          <h1>' . get_the_title() .'</h1>';
+      $result .= '          <p>' . get_the_excerpt() . '</p>';
+      $result .= '        </div>';
+    endif;
+    
+    $result .= '</li><!-- featured-cell -->';
+    return $result;
+}
+add_filter('wp_rotator_featured_cell_markup','wp_rotator_featured_cell_markup');
+
+
+
+function wp_rotator() {
+  echo wp_rotator_markup();
+}
+
 add_action('wp_rotator','wp_rotator');
 
-/////update_option('wp_rotator_options',false); /// FOR DEBUG ONLY. DELETES YOUR ROTATOR SETTINGS, CAREFUL!
+
+function wp_rotator_shortcode($atts, $content = null) {
+  return wp_rotator_markup();
+}
+add_shortcode('wp_rotator', 'wp_rotator_shortcode');  
+
+
+/// CAREFUL ///update_option('wp_rotator_options',false); /// FOR DEBUG ONLY. DELETES YOUR ROTATOR SETTINGS, CAREFUL!
 
 ?>
