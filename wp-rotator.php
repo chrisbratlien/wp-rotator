@@ -3,7 +3,7 @@
 Plugin Name: WP Rotator
 Plugin URI: http://chrisbratlien.com/wp-rotator
 Description: Rotator for featured images. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses.
-Version: 0.1.1
+Version: 0.2.1
 Author: Chris Bratlien, Bill Erickson
 Author URI: http://chrisbratlien.com/wp-rotator
 */
