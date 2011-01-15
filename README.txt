@@ -6,7 +6,7 @@ Requires at least: 2.9.2
 Tested up to: 3.0.4
 Stable tag: trunk
 
-Rotator for featured images or custom markup. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses. Has hooks for customizing
+Rotator for featured images or custom markup. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses. Customize with hooks
 
 == Description ==
 
