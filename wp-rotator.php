@@ -2,8 +2,8 @@
 /*
 Plugin Name: WP Rotator
 Plugin URI: http://chrisbratlien.com/wp-rotator
-Description: Rotator for featured images. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses.
-Version: 0.2.1
+Description: Rotator for featured images or custom markup. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses.
+Version: 0.2.2
 Author: Chris Bratlien, Bill Erickson
 Author URI: http://chrisbratlien.com/wp-rotator
 */
@@ -117,7 +117,10 @@ function wp_rotator_admin_menu() {
   <table class="form-table">
     <tr valign="top">
       <th scope="row">Posts Query Vars</th>
-      <td><input type="text" style="width: 700px;" name="wp_rotator_options[query_vars]" value="<?php echo $options['query_vars']; ?>" /></td>
+      <td>
+        <input type="text" style="width: 700px;" name="wp_rotator_options[query_vars]" value="<?php echo $options['query_vars']; ?>" />
+        <a target="_blank" href="http://codex.wordpress.org/Function_Reference/query_posts">Help</a>
+      </td>
     </tr>
     <tr valign="top">
       <th scope="row">Animate Duration (ms)</th>
@@ -179,34 +182,52 @@ function wp_rotator_admin_menu() {
   <h4>Preview</h4>
   <?php do_action('wp_rotator'); ?>
   
-  <h3>Plugin Customization Hooks (Edit your theme's functions.php)</h3>
-  <strong>Use your own Javascript</strong>
+  <h3>Plugin Customization Hooks</h3>
+  <p>(Edit your theme's functions.php)</p>
+  <br/>
+  <strong>Fine-grained control (if you need it) of which posts are included</strong>
+  <p>This is helpful when post_type=page and you need extra filtering than what query_posts() allows</p>
   <pre>
-    // Admin preview (this page you're on now): 
-    remove_action('admin_head','wp_rotator_javascript'
-    add_action('admin_head','custom_rotator_javascript');
+    function custom_rotator_use_this_post($truthy) {
+      global $post;
+      $foo = get_posts('post_type=attachment&post_parent=' . $post->ID);
+      if (empty($foo)) { //no attachments (so no featured image either), skip these
+        return false;
+      }
+      return true;
+    }
+
+    remove_filter('wp_rotator_use_this_post','wp_rotator_use_this_post');
+    add_filter('wp_rotator_use_this_post','custom_rotator_use_this_post');
   </pre>
-  <pre>
-    // Public facing:
-    remove_action('wp_head','wp_rotator_javascript'
-    add_action('wp_head','custom_rotator_javascript');
-  </pre>    
-  <strong>Use your own CSS</strong>
-  <pre>
-    // Admin preview (this page you're on now): 
-    remove_action('admin_head','wp_rotator_css'
-    add_action('admin_head','custom_rotator_css');
-  </pre>
-  <pre>
-  // Public facing:
-    remove_action('wp_head','wp_rotator_css'
-    add_action('wp_head','custom_rotator_css');
-  </pre>  
   <strong>Use your own Featured Cell Markup</strong>
+  <p>You don't have to stick with the default featured-image based markup. You can use your own markup</p>
   <pre>
     remove_filter('wp_rotator_featured_cell_markup','wp_rotator_featured_cell_markup');
     add_filter('wp_rotator_featured_cell_markup','custom_rotator_featured_cell_markup');
   </pre>
+  <strong>Use your own Javascript</strong>
+  <pre>
+    // Admin Preview (this page)
+    remove_action('admin_head','wp_rotator_javascript');
+    add_action('admin_head','custom_rotator_javascript');
+  </pre>
+  <pre>
+    // Public facing
+    remove_action('wp_head','wp_rotator_javascript');
+    add_action('wp_head','custom_rotator_javascript');
+  </pre>    
+  <strong>Use your own CSS</strong>
+  <pre>
+    // Admin Preview (this page)
+    //remove_action('admin_head','wp_rotator_css'); //removing default CSS not always necessary
+    add_action('admin_head','custom_rotator_css');
+  </pre>
+  <pre>
+    // Public facing
+    //remove_action('wp_head','wp_rotator_css'); //removing default CSS not always necessary
+    add_action('wp_head','custom_rotator_css');
+  </pre>  
 <?php //DEBUG///pp(get_option('wp_rotator_options'));?>
 <?php
 }
@@ -492,6 +513,12 @@ add_action('wp_head','wp_rotator_css');
 add_action('admin_head','wp_rotator_css');
 
 
+function wp_rotator_use_this_post($truthy) {
+  global $post;
+  return true;
+}
+add_filter('wp_rotator_use_this_post','wp_rotator_use_this_post');
+
 
 function wp_rotator_markup() { 
   global $bsd_pane_width;
@@ -512,7 +539,10 @@ function wp_rotator_markup() {
   $first = true;
   while ($featured->have_posts()) : $featured->the_post(); 
     global $post; 
-    $inner .= apply_filters('wp_rotator_featured_cell_markup','');
+    
+    if (apply_filters('wp_rotator_use_this_post',true)) {
+      $inner .= apply_filters('wp_rotator_featured_cell_markup','');
+    }
   endwhile;
   
   ////wp_reset_query();
@@ -539,6 +569,7 @@ function wp_rotator_featured_cell_markup($result) {
     }
     
     $foo = get_posts('post_type=attachment&post_parent=' . $post->ID);
+    
     $image_url = $foo[0]->guid;
     ///////pp($post_image);
     
