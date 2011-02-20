@@ -4,7 +4,7 @@ Donate link: http://chrisbratlien.com/
 Tags: rotator, image, featured, javascript, slider, crossfade
 Requires at least: 2.9.2
 Tested up to: 3.0.4
-Stable tag: trunk
+Stable tag: 0.2.2
 
 Rotator for featured images or custom markup. Slide or crossfade. Posts are chosen using query vars, just like query_posts() uses. Customize with hooks
 
