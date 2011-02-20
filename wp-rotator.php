@@ -1,46 +1,16 @@
 <?php
 /*
 Plugin Name: WP Rotator
-Plugin URI: http://chrisbratlien.com/wp-rotator
+Plugin URI: http://www.wprotator.com
 Description: Rotator for featured images or custom markup. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses.
-Version: 0.2.2
+Version: 0.3
 Author: Chris Bratlien, Bill Erickson
-Author URI: http://chrisbratlien.com/wp-rotator
+Author URI: http://www.wprotator.com/developers
 */
 
-add_theme_support( 'post-thumbnails' );
 
-global $bsd_pane_height;
-global $bsd_pane_width;
 
-$bsd_pane_width = wp_rotator_defaulter($bsd_pane_width,'pane_width');
-$bsd_pane_height = wp_rotator_defaulter($bsd_pane_height,'pane_height');
-
-if (!function_exists('pp')) {
-  function pp($obj,$label = '') {  
-    $data = json_encode(print_r($obj,true));
-    ?>
-    <script type="text/javascript">
-      var obj = <?php echo $data; ?>;
-      var logger = document.getElementById('bsdLogger');
-      if (!logger) {
-        logger = document.createElement('div');
-        logger.id = 'bsdLogger';
-        document.body.appendChild(logger);
-      }
-      ////console.log(obj);
-      var pre = document.createElement('pre');
-      var h2 = document.createElement('h2');
-      pre.innerHTML = obj;
-      
-      h2.innerHTML = '<?php echo addslashes($label); ?>';
-      logger.appendChild(h2);
-      logger.appendChild(pre);
-    </script>
-    <?php
-  }
-}
-
+/* Set up defaults */
 
 function wp_rotator_default_array() {
   return array(
@@ -53,6 +23,7 @@ function wp_rotator_default_array() {
   );
 }
 
+
 function wp_rotator_default($key) {
   $options = wp_rotator_default_array();
   if (isset($options[$key])) {
@@ -63,6 +34,7 @@ function wp_rotator_default($key) {
   }
 }
 
+
 function wp_rotator_defaulter(&$you,$your_name) {
   if (isset($you)) { return $you; }
   $stored = wp_rotator_option($your_name);
@@ -70,6 +42,37 @@ function wp_rotator_defaulter(&$you,$your_name) {
   $default = wp_rotator_default($your_name);
   return $default;
 }
+
+
+
+
+/* Set up featured image size */
+
+global $bsd_pane_height, $bsd_pane_width;
+$bsd_pane_width = wp_rotator_defaulter($bsd_pane_width,'pane_width');
+$bsd_pane_height = wp_rotator_defaulter($bsd_pane_height,'pane_height');
+
+add_theme_support( 'post-thumbnails' );
+add_image_size('wp_rotator', $bsd_pane_width, $bsd_pane_height, true);
+
+
+
+
+/* [wp_rotator] Shortcode */
+/*** Note: Uses wp_rotator_markup(), which is the default outer markup. ***/
+
+function wp_rotator_shortcode($atts, $content = null) {
+  return wp_rotator_markup();
+}
+add_shortcode('wp_rotator', 'wp_rotator_shortcode');  
+
+/* WP Rotator Widget */
+include_once('rotator-widget.php');
+
+
+
+
+/* Register Options */
 
 function wp_rotator_option($key) {
   $options = get_option('wp_rotator_options');
@@ -81,11 +84,16 @@ function wp_rotator_option($key) {
   }
 }
 
+
 function wp_rotator_custom_options_init() {
   register_setting('wp_rotator_options','wp_rotator_options');
 }
 add_action('admin_init', 'wp_rotator_custom_options_init');
 
+
+
+
+/* WP Rotator Options Page */
 
 function wp_rotator_custom_menus() {
 add_submenu_page('options-general.php', 'WP Rotator', 'WP Rotator', 'administrator', 'wp_rotator_admin_options', 'wp_rotator_admin_menu');
@@ -113,7 +121,7 @@ function wp_rotator_admin_menu() {
 ?>
   <form method="post" action="options.php">
   <?php settings_fields('wp_rotator_options');  ?>
-  <h4>Rotator Settings</h4>
+  <h2>Rotator Settings</h2>
   <table class="form-table">
     <tr valign="top">
       <th scope="row">Posts Query Vars</th>
@@ -137,12 +145,6 @@ function wp_rotator_admin_menu() {
         Fade <input type="radio" name="wp_rotator_options[animate_style]" value="fade" <?php checked('fade',$options['animate_style']); ?> />
       </td>
     </tr>    
-    <!--
-    <tr valign="top">
-      <th scope="row">Show Info Box</th>
-      <td><input type="checkbox" name="wp_rotator_options[show_info_box]" <?php ///checked('on',$options['show_info_box']); ?> /></td>
-    </tr>    
-    -->
     <tr valign="top">
       <th scope="row">Pane width (pixels)</th>
       <td><input type="text"  style="width: 50px;" name="wp_rotator_options[pane_width]" value="<?php echo $options['pane_width']; ?>" /></td>
@@ -151,92 +153,41 @@ function wp_rotator_admin_menu() {
       <th scope="row">Pane height (pixels)</th>
       <td><input type="text"  style="width: 50px;" name="wp_rotator_options[pane_height]" value="<?php echo $options['pane_height']; ?>" /></td>
     </tr>    
-  </table>  
+   <tr valign="top"><td colspan="2"><strong>Note: if you change the image size you'll need to use <a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/">Regenerate Thumbnails</a> plugin for your old images to be resized.</strong></td></tr>  
+   </table>  
     <div style="clear: both;">&nbsp;</div>
     <p class="submit">
       <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
     </p>
   </form>
+<p><strong>For information on how to use and customize this plugin, please read the <a href="http://www.wprotator.com/documentation">documentation</a>.</strong></p>
 
-  <h4>Per-Post Custom Fields</h4>
-  <table class="form-table">
-    <tr valign="top">
-      <th>Name</th>
-      <th scope="row">Custom Field</th>
-      <th>Value</th>
-      <th>Description</th>
-    </tr>    
-    <tr valign="top">
-      <td>Show Info Box</td>
-      <td>show_info</td>
-      <td>1</td>
-      <td>This will show an info box overlaying the lower portion of the featured image. Inside the box will be the post title and excerpt</td>
-    </tr>
-    <tr valign="top">
-      <td>Clickthrough URL</td>
-      <td>url</td>
-      <td>http://whatever/url/you/want</td>
-      <td>Clicking the featured image will send the visitor to this URL</td>
-    </tr>
-  </table>
-  <h4>Preview</h4>
+
+  <h2>Preview</h2>
   <?php do_action('wp_rotator'); ?>
-  
-  <h3>Plugin Customization Hooks</h3>
-  <p>(Edit your theme's functions.php)</p>
-  <br/>
-  <strong>Fine-grained control (if you need it) of which posts are included</strong>
-  <p>This is helpful when post_type=page and you need extra filtering than what query_posts() allows</p>
-  <pre>
-    function custom_rotator_use_this_post($truthy) {
-      global $post;
-      $foo = get_posts('post_type=attachment&post_parent=' . $post->ID);
-      if (empty($foo)) { //no attachments (so no featured image either), skip these
-        return false;
-      }
-      return true;
-    }
-
-    remove_filter('wp_rotator_use_this_post','wp_rotator_use_this_post');
-    add_filter('wp_rotator_use_this_post','custom_rotator_use_this_post');
-  </pre>
-  <strong>Use your own Featured Cell Markup</strong>
-  <p>You don't have to stick with the default featured-image based markup. You can use your own markup</p>
-  <pre>
-    remove_filter('wp_rotator_featured_cell_markup','wp_rotator_featured_cell_markup');
-    add_filter('wp_rotator_featured_cell_markup','custom_rotator_featured_cell_markup');
-  </pre>
-  <strong>Use your own Javascript</strong>
-  <pre>
-    // Admin Preview (this page)
-    remove_action('admin_head','wp_rotator_javascript');
-    add_action('admin_head','custom_rotator_javascript');
-  </pre>
-  <pre>
-    // Public facing
-    remove_action('wp_head','wp_rotator_javascript');
-    add_action('wp_head','custom_rotator_javascript');
-  </pre>    
-  <strong>Use your own CSS</strong>
-  <pre>
-    // Admin Preview (this page)
-    //remove_action('admin_head','wp_rotator_css'); //removing default CSS not always necessary
-    add_action('admin_head','custom_rotator_css');
-  </pre>
-  <pre>
-    // Public facing
-    //remove_action('wp_head','wp_rotator_css'); //removing default CSS not always necessary
-    add_action('wp_head','custom_rotator_css');
-  </pre>  
-<?php //DEBUG///pp(get_option('wp_rotator_options'));?>
 <?php
 }
+
+
+
+
+/* Enqueue JQuery */
 
 function wp_rotator_add_jquery() {
   wp_enqueue_script('jquery');
 }
 add_action('init','wp_rotator_add_jquery');
 add_action('admin_init','wp_rotator_add_jquery');
+
+
+
+/* Default Javascript */
+
+/***	Don't modify this. You can unhook it and use your own like this: 	*/
+/***	remove_action('wp_head', 'wp_rotator_javascript'); 		*/
+/***	remove_action('admin_head','wp_rotator_javascript'); 	*/
+/*** 	add_action('wp_head', 'custom_rotator_javascript');		*/
+/***	add_action('admin_head', 'custom_rotator_javascript');	*/
 
 
 function wp_rotator_javascript() {
@@ -260,25 +211,9 @@ function wp_rotator_javascript() {
       that.candidates = jQuery('.featured-cell');
       that.autoPage = true;
       
-
-      //that.candidates = [];
-      //jQuery('.featured-cell img').each(function(i,e){
-      //  that.candidates.push(jQuery(e).attr('src'));
-      //});
-      
-      /////console.log(that.candidates);
-      
       that.totalPages = that.candidates.length;
 
-    /***      
-      that.nexts = [];
-      for (var i = 0; i < that.totalPages; i++) {
-        that.nexts[i] = i + 1;
-      }
-      that.nexts[i-1] = 0;
-    *****/
-
-     that.nexts = [];
+	  that.nexts = [];
       that.prevs = [];
       for (var i = 0; i < that.totalPages; i++) {
         that.nexts[i] = i + 1;
@@ -317,16 +252,12 @@ function wp_rotator_javascript() {
     };
 
     that.fadeToPage = function(offset) {
-      //jQuery('.pane').fadeOut(that.slideDelay/2, function() {
-        var newPage = that.pageJQ(offset);//jQuery(that.candidates[offset]);
-        var oldPage = that.pageJQ(that.currentOffset);//jQuery(that.candidates[that.currentOffset]);
-        //////jQuery('.featured-cell').hide();
+        var newPage = that.pageJQ(offset);
+        var oldPage = that.pageJQ(that.currentOffset);
         
         newPage.fadeTo(that.slideDelay/2,1,function(){
           oldPage.fadeTo(that.slideDelay/2,0);
         });
-        
-        //jQuery('.pane').fadeIn(that.slideDelay/2);      
     };
 
   
@@ -387,28 +318,26 @@ function wp_rotator_javascript() {
 add_action('wp_head','wp_rotator_javascript');
 add_action('admin_head','wp_rotator_javascript');
 
+
+
+/* Default CSS */
+
+/***	Don't modify this. You can unhook it and use your own like this: 	*/
+/***	remove_action('wp_head', 'wp_rotator_css'); 		*/
+/***	remove_action('admin_head','wp_rotator_css'); 	*/
+/*** 	add_action('wp_head', 'custom_rotator_css');		*/
+/***	add_action('admin_head', 'custom_rotator_css');	*/
+
+
 function wp_rotator_css() {
   global $bsd_pane_width;
   global $bsd_pane_height;
   $plugin_path_url = get_bloginfo('url') . '/wp-content/plugins/wp-rotator';
 ?>
 <style type="text/css">
-/****
-WARNING: Don't modify the CSS here, because a plugin update could wipe them out.
 
-Instead, override this hook in your functions.php like so:
-
-//public-facing CSS
-remove_action('wp_head','wp_rotator_css');
-add_action('wp_head','custom_wp_rotator_css');
-
-//admin-preview CSS
-remove_action('admin_head','wp_rotator_css');
-add_action('admin_head','custom_wp_rotator_css');
-
-**/
 .wp-rotator-wrap {
-  padding: 25px; margin-left: -7px;
+  padding: 0; margin: 0;
 }
 
 .wp-rotator-wrap .pane {
@@ -421,13 +350,10 @@ add_action('admin_head','custom_wp_rotator_css');
 }
 
 .wp-rotator-wrap .elements {
-  /* width: 9000px; */
   height: <?php echo $bsd_pane_height; ?>px;
   padding: 0px;
   margin: 0px;
 }
-
-
 
 .wp-rotator-wrap .featured-cell {
   width: <?php echo $bsd_pane_width; ?>px;
@@ -444,21 +370,15 @@ add_action('admin_head','custom_wp_rotator_css');
     position: relative;
     float: left;
   <?php endif; ?>
-  /***
-   border: 1px solid red;
-   background: green;
-  ***/
   margin: 0px;
   padding: 0px;
 }
-
 
 .wp-rotator-wrap .featured-cell .image {
   position: absolute;
   top: 0;
   left: 0;
 }
-
 
 .wp-rotator-wrap .featured-cell .info {
   position: absolute;
@@ -479,32 +399,7 @@ add_action('admin_head','custom_wp_rotator_css');
   color: #CCD;
 }
 
-.wp-rotator-wrap .featured-cell a {
-
-}
-
-.wp-rotator-wrap .featured-cell .info p {
-  
-}
-
 .wp-rotator-wrap .current-cell { z-index: 500; }
-
-
-#bsdLogger {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  border: 2px solid #bbb;
-  padding: 3px;
-  background: white;
-  color: #444;
-  z-index: 999;
-  font-size: 1.25em;
-  width: 400px;
-  height: 800px;
-  overflow: scroll;
-}
-
 
 </style>
 <?php
@@ -513,11 +408,21 @@ add_action('wp_head','wp_rotator_css');
 add_action('admin_head','wp_rotator_css');
 
 
-function wp_rotator_use_this_post($truthy) {
-  global $post;
-  return true;
-}
-add_filter('wp_rotator_use_this_post','wp_rotator_use_this_post');
+
+
+/* Default Outer Markup */
+
+/***	Don't modify this. You can unhook it and use your own like this: 	*/
+/***	remove_action('wp_rotator','wp_rotator');		*/
+/***	add_action('wp_rotator', 'custom_rotator');		*/
+/***	function custom_rotator() {						*/
+/***		echo custom_rotator_markup();				*/
+/***	}												*/
+
+/*** Note that [wp-rotator] shortcode also uses this so you'll need to rebuild that as well */
+/***	remove_shortcode('wp_rotator');								*/
+/*** 	add_shortcode('wp_rotator', 'custom_rotator_shortcode'); 	*/
+
 
 
 function wp_rotator_markup() { 
@@ -532,7 +437,6 @@ function wp_rotator_markup() {
         
         
   $featured = new WP_Query(wp_rotator_option('query_vars'));
-  ///pp($featured);
   
   $inner = '';
   
@@ -544,9 +448,7 @@ function wp_rotator_markup() {
       $inner .= apply_filters('wp_rotator_featured_cell_markup','');
     }
   endwhile;
-  
-  ////wp_reset_query();
-  
+    
   $result .= $inner;
   $result .= '      </ul><!-- elements -->';
   $result .= '  	</div><!-- #feature_box_rotator .pane -->';
@@ -555,24 +457,29 @@ function wp_rotator_markup() {
   return $result;
 }
 
+function wp_rotator() {
+  echo wp_rotator_markup();
+}
+
+add_action('wp_rotator','wp_rotator');
+
+
+
+/* Default Inner Markup */
+/***	Don't modify this. You can unhook it and use your own like this: 	*/
+/***	remove_filter('wp_rotator_featured_cell_markup','wp_rotator_featured_cell_markup');	*/
+/*** 	add_filter('wp_rotator_featured_cell_markup','custom_featured_cell_markup'); */
+
 
 function wp_rotator_featured_cell_markup($result) {
-  global $bsd_pane_width;
-  global $bsd_pane_height;
 
     global $post;
-    ///pp($post);
     $clickthrough_url = get_post_meta($post->ID,'url',true);
     $show_info = get_post_meta($post->ID,'show_info',true);
     if (empty($clickthrough_url)) {
       $clickthrough_url = get_permalink($post->ID);
     }
-    
-    $foo = get_posts('post_type=attachment&post_parent=' . $post->ID);
-    
-    $image_url = $foo[0]->guid;
-    ///////pp($post_image);
-    
+        
     $result .= '<li class="featured-cell"';
         if ($animate_style == 'fade') {
           if ($first) { 
@@ -584,7 +491,15 @@ function wp_rotator_featured_cell_markup($result) {
         }
     $result .= '>';
     $result .= '<a href="' . $clickthrough_url . '">';
-    $result .= '  <img width="' . $bsd_pane_width . '" height="' . $bsd_pane_height . '" src="' . $image_url . '" />';
+    
+    /* If you change the width/height in WP Rotator Settings but don't use Regenerate Thumbnails plugin, this will squish the image to the right dimensions rather than not changing the image. */
+    
+    $image =  wp_get_attachment_image_src( get_post_thumbnail_id(), 'wp_rotator' );
+    global $bsd_pane_height, $bsd_pane_width;
+	if ($image[1] == $bsd_pane_height && $image[2] == $bsd_pane_width)
+		$result .= get_the_post_thumbnail( $post->ID, 'wp_rotator' );
+	else $result .= '  <img width="' . $bsd_pane_width . '" height="' . $bsd_pane_height . '" src="' . $image[0] . '" />';
+
     $result .= '</a>';
     
     if ($show_info == true):
@@ -601,19 +516,18 @@ add_filter('wp_rotator_featured_cell_markup','wp_rotator_featured_cell_markup');
 
 
 
-function wp_rotator() {
-  echo wp_rotator_markup();
+/* Fine Grained Control */
+/*** Helpful if you need extra filtering beyond query_posts() */
+/*** See @link http://www.wprotator.com for documentation **/
+
+/*** 	Example: 		*/
+/***	remove_filter('wp_rotator_use_this_post','wp_rotator_use_this_post'); 		*/
+/*** 	add_filter('wp_rotator_use_this_post','custom_rotator_use_this_post');		*/
+  
+function wp_rotator_use_this_post($truthy) {
+  global $post;
+  return true;
 }
-
-add_action('wp_rotator','wp_rotator');
-
-
-function wp_rotator_shortcode($atts, $content = null) {
-  return wp_rotator_markup();
-}
-add_shortcode('wp_rotator', 'wp_rotator_shortcode');  
-
-
-/// CAREFUL ///update_option('wp_rotator_options',false); /// FOR DEBUG ONLY. DELETES YOUR ROTATOR SETTINGS, CAREFUL!
+add_filter('wp_rotator_use_this_post','wp_rotator_use_this_post');
 
 ?>
