@@ -1,18 +1,21 @@
 === WP Rotator ===
 Contributors: chrisbratlien, billerickson
-Donate link: http://chrisbratlien.com/
+Donate link: http://wprotator.com/
 Tags: rotator, image, featured, javascript, slider, crossfade
 Requires at least: 2.9.2
 Tested up to: 3.0.4
 Stable tag: 0.2.2
 
-Rotator for featured images or custom markup. Slide or crossfade. Posts are chosen using query vars, just like query_posts() uses. Customize with hooks
+WP Rotator is a plugin designed for developers to quickly and easily create custom rotators.
 
 == Description ==
 
-Rotator for featured images or custom markup. Control which posts to rotate with Query Vars setting. Slide or cross-fade animation style. Control animate/rest delay times. Toggle info box and override clicktrough URLs at a per-post level. Use hooks to override the CSS, Javascript, or markup in your theme's functions.php file.
+    * Uses query_posts() parameters to specify what shows up in the rotator.
+    * Uses Post Thumbnails for the images rotating.
+    * The Javascript, CSS, and Markup are all functions that can be unhooked and replaced by your code.
+    * Refer to the Documentation for more details on customizing it.
 
-http://chrisbratlien.com/wp-rotator
+http://www.wprotator.com/documentation
 
 == Settings ==
 
