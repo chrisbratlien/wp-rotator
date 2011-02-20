@@ -152,9 +152,9 @@ function wp_rotator_admin_menu() {
     <tr valign="top">
       <th scope="row">Pane height (pixels)</th>
       <td><input type="text"  style="width: 50px;" name="wp_rotator_options[pane_height]" value="<?php echo $options['pane_height']; ?>" /></td>
-    </tr>    
-   <tr valign="top"><td colspan="2"><strong>Note: if you change the image size you'll need to use <a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/">Regenerate Thumbnails</a> plugin for your old images to be resized.</strong></td></tr>  
-   </table>  
+    </tr>  
+    <tr valign="top"><td colspan="2"><strong>Note: if you change the image size you'll need to use <a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/">Regenerate Thumbnails</a> plugin for your old images to be resized.</strong></td></tr>  
+  </table>  
     <div style="clear: both;">&nbsp;</div>
     <p class="submit">
       <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -165,6 +165,8 @@ function wp_rotator_admin_menu() {
 
   <h2>Preview</h2>
   <?php do_action('wp_rotator'); ?>
+  
+
 <?php
 }
 
@@ -426,8 +428,7 @@ add_action('admin_head','wp_rotator_css');
 
 
 function wp_rotator_markup() { 
-  global $bsd_pane_width;
-  global $bsd_pane_height;
+  global $bsd_pane_width, $bsd_pane_height, $animate_style, $first;
   $animate_style = wp_rotator_option('animate_style');
 
   $result = '';
@@ -473,7 +474,7 @@ add_action('wp_rotator','wp_rotator');
 
 function wp_rotator_featured_cell_markup($result) {
 
-    global $post;
+    global $post, $animate_style, $first;
     $clickthrough_url = get_post_meta($post->ID,'url',true);
     $show_info = get_post_meta($post->ID,'show_info',true);
     if (empty($clickthrough_url)) {
