@@ -28,7 +28,7 @@ function wp_rotator_options_init() {
      global $wp_rotator_options;
      $wp_rotator_options = get_option( 'wp_rotator_options' );
      if ( false === $wp_rotator_options ) {
-          $oenology_options = wp_rotator_default_array();
+          $wp_rotator_options = wp_rotator_default_array();
      }
      update_option( 'wp_rotator_options', $wp_rotator_options );
 }
