@@ -120,7 +120,7 @@ function wp_rotator_register_settings() {
 	add_settings_field('wp_rotator_pane_height', 'Pane Height (pixels)', 'wp_rotator_pane_height', 'wp_rotator', 'wp_rotator_options_general');
 	
 	function wp_rotator_options_general_header_text() {
-		echo '<p><a href="http://www.wprotator.com/documentation">Please read the documentation</a> for information on how to use and customize this plugin.</p>';
+		echo '<p><a target="_blank" href="http://www.wprotator.com/documentation">Please read the documentation</a> for information on how to use and customize this plugin.</p>';
 	}	
 	function wp_rotator_query_vars() {
 		$wp_rotator_options = get_option('wp_rotator_options');
@@ -457,8 +457,8 @@ function wp_rotator_featured_cell_markup($result) {
     $clickthrough_url = esc_attr(get_post_meta($post->ID, 'wp_rotator_url', true));
     $show_info = esc_attr(get_post_meta($post->ID, 'wp_rotator_show_info', true));
     /* Backwards compatible with old version, where we didn't prefix the field */
-    if (!isset($clickthrough_url)) $clickthrough_url = esc_attr(get_post_meta($post->ID,'url',true));
-    if (!isset($show_info)) $show_info = esc_attr(get_post_meta($post->ID,'show_info',true));
+    if (empty($clickthrough_url)) { $clickthrough_url = esc_attr(get_post_meta($post->ID,'url',true)); }
+    if (empty($show_info)) { $show_info = esc_attr(get_post_meta($post->ID,'show_info',true)); }
     /* */
     if (!isset($clickthrough_url)) {
       $clickthrough_url = get_permalink($post->ID);
