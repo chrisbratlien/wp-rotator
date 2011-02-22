@@ -4,7 +4,7 @@ Donate link: http://wprotator.com/
 Tags: rotator, image, featured, javascript, slider, crossfade
 Requires at least: 2.9.2
 Tested up to: 3.0.4
-Stable tag: 0.2.2
+Stable tag: 0.3
 
 WP Rotator is a plugin designed for developers to quickly and easily create custom rotators.
 
