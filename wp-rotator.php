@@ -488,7 +488,7 @@ function wp_rotator_featured_cell_markup($result) {
     if ($show_info == true):
       $result .= '          <div class="info">';
       $result .= '          <h1>' . get_the_title() .'</h1>';
-      $result .= '          <p>' . get_the_excerpt() . '</p>';
+      if (get_the_excerpt()) $result .= '          <p>' . get_the_excerpt() . '</p>';
       $result .= '        </div>';
     endif;
     
