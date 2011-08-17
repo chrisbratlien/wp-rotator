@@ -1,6 +1,6 @@
 === WP Rotator ===
 Contributors: chrisbratlien, billerickson
-Donate link: http://wprotator.com/
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MZGLG835MNV8L
 Tags: rotator, image, featured, javascript, slider, crossfade
 Requires at least: 2.9.2
 Tested up to: 3.0.4
