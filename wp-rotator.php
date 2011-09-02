@@ -52,7 +52,7 @@ function wp_rotator_default($key) {
 function wp_rotator_option($key) {
   $options = get_option('wp_rotator_options');
   if (!empty($options[$key])) { 
-    return $options[$key]; 
+    return esc_attr( $options[$key] ); 
   }
   else {
     return wp_rotator_default($key);
@@ -104,7 +104,7 @@ function wp_rotator_settings_page() {?>
 	<input name="wp_rotator_options[reset-general]" type="submit" class="button-secondary" value="<?php esc_attr_e('Reset Defaults', 'wp_rotator'); ?>" /></p>
 
 
-	<h3>Preview</h3>
+	<h3><?php _e( 'Preview' , 'wp-rotator' );?></h3>
 	<?php do_action('wp_rotator');?>
 	</form>
 	</div>
@@ -127,29 +127,29 @@ function wp_rotator_register_settings() {
 	}	
 	function wp_rotator_query_vars() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-	 	echo '<input type="text" value="'.$wp_rotator_options['query_vars'].'" name="wp_rotator_options[query_vars]" style="width: 500px;"> <a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">' . __( 'Help', 'wp-rotator' ) . '</a>';
+	 	echo '<input type="text" value="'. esc_attr( $wp_rotator_options['query_vars'] ) .'" name="wp_rotator_options[query_vars]" style="width: 500px;"> <a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">' . __( 'Help', 'wp-rotator' ) . '</a>';
 	}
 	function wp_rotator_animate_ms() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-		echo '<input type="text" value="'.$wp_rotator_options['animate_ms'].'" name="wp_rotator_options[animate_ms]" class="normal_text" />';
+		echo '<input type="text" value="'. esc_attr( $wp_rotator_options['animate_ms'] ) .'" name="wp_rotator_options[animate_ms]" class="normal_text" />';
 	}
 	function wp_rotator_rest_ms() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-		echo '<input type="text" value="'.$wp_rotator_options['rest_ms'].'" name="wp_rotator_options[rest_ms]" class="normal_text" />';
+		echo '<input type="text" value="'.esc_attr( $wp_rotator_options['rest_ms'] ) .'" name="wp_rotator_options[rest_ms]" class="normal_text" />';
 	}
 	function wp_rotator_animate_style() {
 		$wp_rotator_options = get_option('wp_rotator_options'); ?>
-       <?php _e( 'Slide', 'wp-rotator' );?> <input type="radio" name="wp_rotator_options[animate_style]" value="slide" <?php checked('slide',$wp_rotator_options['animate_style']); ?> style="margin-right: 15px;" />
-        <?php _e( 'Fade', 'wp-rotator' );?> <input type="radio" name="wp_rotator_options[animate_style]" value="fade" <?php checked('fade',$wp_rotator_options['animate_style']); ?> />
+       <?php _e( 'Slide', 'wp-rotator' );?> <input type="radio" name="wp_rotator_options[animate_style]" value="slide" <?php checked('slide', esc_attr( $wp_rotator_options['animate_style'] ) ); ?> style="margin-right: 15px;" />
+        <?php _e( 'Fade', 'wp-rotator' );?> <input type="radio" name="wp_rotator_options[animate_style]" value="fade" <?php checked('fade', esc_attr( $wp_rotator_options['animate_style'] ) ); ?> />
         <?php
 	}
 	function wp_rotator_pane_width() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-		echo '<input type="text" value="'.$wp_rotator_options['pane_width'].'" name="wp_rotator_options[pane_width]" class="normal_text" /> ' . sprintf( __( 'If you change this after uploading an image, use the <a href="%s" target="_blank">Regenerate Thumbnails</a> plugin to update images.', 'wp-rotator'), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' );
+		echo '<input type="text" value="'. esc_attr( $wp_rotator_options['pane_width'] ) .'" name="wp_rotator_options[pane_width]" class="normal_text" /> ' . sprintf( __( 'If you change this after uploading an image, use the <a href="%s" target="_blank">Regenerate Thumbnails</a> plugin to update images.', 'wp-rotator'), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' );
 	}
 	function wp_rotator_pane_height() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-		echo '<input type="text" value="'.$wp_rotator_options['pane_height'].'" name="wp_rotator_options[pane_height]" class="normal_text" /> ' . sprintf( __( 'If you change this after uploading an image, use the <a href="%s" target="_blank">Regenerate Thumbnails</a> plugin to update images.', 'wp-rotator' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' );
+		echo '<input type="text" value="'. esc_attr( $wp_rotator_options['pane_height'] ) .'" name="wp_rotator_options[pane_height]" class="normal_text" /> ' . sprintf( __( 'If you change this after uploading an image, use the <a href="%s" target="_blank">Regenerate Thumbnails</a> plugin to update images.', 'wp-rotator' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' );
 	}
 	
 	function wp_rotator_options_validate($input) {
@@ -333,7 +333,6 @@ add_action('admin_head','wp_rotator_javascript');
 function wp_rotator_css() {
   global $bsd_pane_width;
   global $bsd_pane_height;
-  $plugin_path_url = get_bloginfo('url') . '/wp-content/plugins/wp-rotator';
 ?>
 <style type="text/css">
 
@@ -389,7 +388,7 @@ function wp_rotator_css() {
   height: 50px;
   padding: 8px 8px;
   overflow: hidden;
-  background: url(<?php echo $plugin_path_url; ?>/feature-bg.png) transparent;
+  background: url(<?php echo plugins_url( 'feature-bg.png', __FILE__ );?> ) transparent;
   color: #ddd;  
 }
 
@@ -423,12 +422,12 @@ add_action('admin_head','wp_rotator_css');
 
 function wp_rotator_markup() { 
   global $bsd_pane_width, $bsd_pane_height, $animate_style, $first;
-  $animate_style = wp_rotator_option('animate_style');
+  $animate_style = esc_attr( wp_rotator_option('animate_style') );
   $result = '';
   $result .= '<div class="wp-rotator-wrap">';
   $result .= '  <div class="pane">';
   $result .= '    <ul class="elements" style="width: 5000px">';
-  $featured = new WP_Query(wp_rotator_option('query_vars'));
+  $featured = new WP_Query( esc_attr( wp_rotator_option('query_vars') ) );
   $inner = '';
   $first = true;
   while ($featured->have_posts()) : $featured->the_post(); 
@@ -457,10 +456,10 @@ add_action('wp_rotator','wp_rotator');
 
 function wp_rotator_featured_cell_markup($result) {
     global $post, $animate_style, $first;
-    $clickthrough_url = esc_attr(get_post_meta($post->ID, 'wp_rotator_url', true));
+    $clickthrough_url = esc_url (get_post_meta($post->ID, 'wp_rotator_url', true));
     $show_info = esc_attr(get_post_meta($post->ID, 'wp_rotator_show_info', true));
     /* Backwards compatible with old version, where we didn't prefix the field */
-    if (empty($clickthrough_url)) { $clickthrough_url = esc_attr(get_post_meta($post->ID,'url',true)); }
+    if (empty($clickthrough_url)) { $clickthrough_url = esc_url(get_post_meta($post->ID,'url',true)); }
     if (empty($show_info)) { $show_info = esc_attr(get_post_meta($post->ID,'show_info',true)); }
     /* */
     if (!isset($clickthrough_url)) {
