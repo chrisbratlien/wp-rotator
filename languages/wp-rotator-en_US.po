@@ -1,0 +1,100 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Language: \n"
+"X-Poedit-Country: \n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: wp-rotator.php:87
+#: wp-rotator.php:95
+#@ wp-rotator
+msgid "WP Rotator"
+msgstr "WP Rotator"
+
+#: wp-rotator.php:102
+#@ wp_rotator
+msgid "Save Settings"
+msgstr ""
+
+#: wp-rotator.php:104
+#@ wp_rotator
+msgid "Reset Defaults"
+msgstr ""
+
+#: wp-rotator.php:117
+#@ wp-rotator
+msgid "Settings"
+msgstr "Settings"
+
+#: wp-rotator.php:118
+#@ wp-rotator
+msgid "Post Query Vars"
+msgstr "Post Query Vars"
+
+#: wp-rotator.php:119
+#@ wp-rotator
+msgid "Animate Duration (ms)"
+msgstr "Animate Duration (ms)"
+
+#: wp-rotator.php:120
+#@ wp-rotator
+msgid "Remain Still Duration (ms)"
+msgstr "Remain Still Duration (ms)"
+
+#: wp-rotator.php:121
+#@ wp-rotator
+msgid "Animate Style"
+msgstr "Animate Style"
+
+#: wp-rotator.php:122
+#@ wp-rotator
+msgid "Pane Width (pixels)"
+msgstr "Pane Width (pixels)"
+
+#: wp-rotator.php:123
+#@ wp-rotator
+msgid "Pane Height (pixels)"
+msgstr "Pane Height (pixels)"
+
+#: wp-rotator.php:126
+#, php-format
+#@ wp-rotator
+msgid "<p><a target=\"_blank\" href=\"%s\">Please read the documentation</a> for information on how to use and customize this plugin.</p>"
+msgstr "<p><a target=\"_blank\" href=\"%s\">Please read the documentation</a> for information on how to use and customize this plugin.</p>"
+
+#: wp-rotator.php:130
+#@ wp-rotator
+msgid "Help"
+msgstr "Help"
+
+#: wp-rotator.php:142
+#@ wp-rotator
+msgid "Slide"
+msgstr "Slide"
+
+#: wp-rotator.php:143
+#@ wp-rotator
+msgid "Fade"
+msgstr "Fade"
+
+#: wp-rotator.php:148
+#: wp-rotator.php:152
+#, php-format
+#@ wp-rotator
+msgid "If you change this after uploading an image, use the <a href=\"%s\" target=\"_blank\">Regenerate Thumbnails</a> plugin to update images."
+msgstr "If you change this after uploading an image, use the <a href=\"%s\" target=\"_blank\">Regenerate Thumbnails</a> plugin to update images."
+

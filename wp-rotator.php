@@ -8,6 +8,9 @@ Author: Chris Bratlien, Bill Erickson
 Author URI: http://www.wprotator.com/developers
 */
 
+/* Translations */
+load_plugin_textdomain( 'wp-rotator', false, basename( dirname( __FILE__ ) ) . '/languages' );
+
 
 /* Set up defaults */
 function wp_rotator_default_array() {
@@ -81,7 +84,7 @@ include_once('rotator-widget.php');
 /* WP Rotator Settings Page */
 /*** Add the WP Rotator subpage to Settings ***/
 function wp_rotator_menu_options() {
-     add_submenu_page('options-general.php', 'WP Rotator', 'WP Rotator', 'edit_theme_options', 'wp-rotator-settings', 'wp_rotator_settings_page');
+     add_submenu_page('options-general.php', __( 'WP Rotator', 'wp-rotator' ), __( 'WP Rotator', 'wp-rotator' ), 'edit_theme_options', 'wp-rotator-settings', 'wp_rotator_settings_page');
 }
 add_action('admin_menu', 'wp_rotator_menu_options');
 
@@ -89,7 +92,7 @@ add_action('admin_menu', 'wp_rotator_menu_options');
 function wp_rotator_settings_page() {?>
 	<div class="wrap">	
 	<div id="icon-options-general" class="icon32"><br /></div>
-	<h2>WP Rotator</h2>
+	<h2><?php _e( 'WP Rotator', 'wp-rotator' );?></h2>
 	<form action="options.php" method="post">
 	<?php
 	settings_fields('wp_rotator_options');
@@ -111,20 +114,20 @@ function wp_rotator_settings_page() {?>
 add_action('admin_init', 'wp_rotator_register_settings');
 function wp_rotator_register_settings() {
 	register_setting( 'wp_rotator_options', 'wp_rotator_options', 'wp_rotator_options_validate' );
-	add_settings_section('wp_rotator_options_general', 'Settings', 'wp_rotator_options_general_header_text', 'wp_rotator');
-	add_settings_field('wp_rotator_query_vars', 'Post Query Vars', 'wp_rotator_query_vars', 'wp_rotator', 'wp_rotator_options_general');
-	add_settings_field('wp_rotator_animate_ms', 'Animate Duration (ms)', 'wp_rotator_animate_ms', 'wp_rotator', 'wp_rotator_options_general');
-	add_settings_field('wp_rotator_rest_ms', 'Remain Still Duration (ms)', 'wp_rotator_rest_ms', 'wp_rotator', 'wp_rotator_options_general');
-	add_settings_field('wp_rotator_animate_style', 'Animate Style', 'wp_rotator_animate_style', 'wp_rotator', 'wp_rotator_options_general');
-	add_settings_field('wp_rotator_pane_width', 'Pane Width (pixels)', 'wp_rotator_pane_width', 'wp_rotator', 'wp_rotator_options_general');
-	add_settings_field('wp_rotator_pane_height', 'Pane Height (pixels)', 'wp_rotator_pane_height', 'wp_rotator', 'wp_rotator_options_general');
+	add_settings_section('wp_rotator_options_general', __( 'Settings', 'wp-rotator' ), 'wp_rotator_options_general_header_text', 'wp_rotator');
+	add_settings_field('wp_rotator_query_vars', __( 'Post Query Vars', 'wp-rotator' ), 'wp_rotator_query_vars', 'wp_rotator', 'wp_rotator_options_general');
+	add_settings_field('wp_rotator_animate_ms', __( 'Animate Duration (ms)', 'wp-rotator' ), 'wp_rotator_animate_ms', 'wp_rotator', 'wp_rotator_options_general');
+	add_settings_field('wp_rotator_rest_ms', __( 'Remain Still Duration (ms)', 'wp-rotator' ), 'wp_rotator_rest_ms', 'wp_rotator', 'wp_rotator_options_general');
+	add_settings_field('wp_rotator_animate_style', __( 'Animate Style', 'wp-rotator' ), 'wp_rotator_animate_style', 'wp_rotator', 'wp_rotator_options_general');
+	add_settings_field('wp_rotator_pane_width', __( 'Pane Width (pixels)', 'wp-rotator' ), 'wp_rotator_pane_width', 'wp_rotator', 'wp_rotator_options_general');
+	add_settings_field('wp_rotator_pane_height', __( 'Pane Height (pixels)', 'wp-rotator' ), 'wp_rotator_pane_height', 'wp_rotator', 'wp_rotator_options_general');
 	
 	function wp_rotator_options_general_header_text() {
-		echo '<p><a target="_blank" href="http://www.wprotator.com/documentation">Please read the documentation</a> for information on how to use and customize this plugin.</p>';
+		echo sprintf( __( '<p><a target="_blank" href="%s">Please read the documentation</a> for information on how to use and customize this plugin.</p>', 'wp-rotator' ), 'http://www.wprotator.com/documentation' );
 	}	
 	function wp_rotator_query_vars() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-	 	echo '<input type="text" value="'.$wp_rotator_options['query_vars'].'" name="wp_rotator_options[query_vars]" style="width: 500px;"> <a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">Help</a>';
+	 	echo '<input type="text" value="'.$wp_rotator_options['query_vars'].'" name="wp_rotator_options[query_vars]" style="width: 500px;"> <a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">' . __( 'Help', 'wp-rotator' ) . '</a>';
 	}
 	function wp_rotator_animate_ms() {
 		$wp_rotator_options = get_option('wp_rotator_options');
@@ -136,17 +139,17 @@ function wp_rotator_register_settings() {
 	}
 	function wp_rotator_animate_style() {
 		$wp_rotator_options = get_option('wp_rotator_options'); ?>
-       Slide <input type="radio" name="wp_rotator_options[animate_style]" value="slide" <?php checked('slide',$wp_rotator_options['animate_style']); ?> style="margin-right: 15px;" />
-        Fade <input type="radio" name="wp_rotator_options[animate_style]" value="fade" <?php checked('fade',$wp_rotator_options['animate_style']); ?> />
+       <?php _e( 'Slide', 'wp-rotator' );?> <input type="radio" name="wp_rotator_options[animate_style]" value="slide" <?php checked('slide',$wp_rotator_options['animate_style']); ?> style="margin-right: 15px;" />
+        <?php _e( 'Fade', 'wp-rotator' );?> <input type="radio" name="wp_rotator_options[animate_style]" value="fade" <?php checked('fade',$wp_rotator_options['animate_style']); ?> />
         <?php
 	}
 	function wp_rotator_pane_width() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-		echo '<input type="text" value="'.$wp_rotator_options['pane_width'].'" name="wp_rotator_options[pane_width]" class="normal_text" /> If you change this after uploading an image, use the <a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/" target="_blank">Regenerate Thumbnails</a> plugin to update images.';
+		echo '<input type="text" value="'.$wp_rotator_options['pane_width'].'" name="wp_rotator_options[pane_width]" class="normal_text" /> ' . sprintf( __( 'If you change this after uploading an image, use the <a href="%s" target="_blank">Regenerate Thumbnails</a> plugin to update images.', 'wp-rotator'), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' );
 	}
 	function wp_rotator_pane_height() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-		echo '<input type="text" value="'.$wp_rotator_options['pane_height'].'" name="wp_rotator_options[pane_height]" class="normal_text" /> If you change this after uploading an image, use the <a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/" target="_blank">Regenerate Thumbnails</a> plugin to update images.';
+		echo '<input type="text" value="'.$wp_rotator_options['pane_height'].'" name="wp_rotator_options[pane_height]" class="normal_text" /> ' . sprintf( __( 'If you change this after uploading an image, use the <a href="%s" target="_blank">Regenerate Thumbnails</a> plugin to update images.', 'wp-rotator' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' );
 	}
 	
 	function wp_rotator_options_validate($input) {
