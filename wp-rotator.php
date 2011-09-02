@@ -63,8 +63,8 @@ function wp_rotator_option($key) {
 /* Set up featured image size */
 global $bsd_pane_height, $bsd_pane_width;
 $wp_rotator_options = get_option('wp_rotator_options');
-$bsd_pane_width = wp_rotator_option('pane_width');
-$bsd_pane_height = wp_rotator_option('pane_height');
+$bsd_pane_width = esc_attr( wp_rotator_option('pane_width') );
+$bsd_pane_height = esc_attr( wp_rotator_option('pane_height') );
 
 add_theme_support( 'post-thumbnails' );
 add_image_size('wp_rotator', $bsd_pane_width, $bsd_pane_height, true);

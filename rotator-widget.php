@@ -10,18 +10,18 @@ function wp_rotator_load_widgets() {
 class WP_Rotator_Widget extends WP_Widget {
 	function WP_Rotator_Widget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'widget_rotator', 'description' => 'Displays the WP Rotator. Go to Settings > WP Rotator to configure.' );
+		$widget_ops = array( 'classname' => 'widget_rotator', 'description' => __( 'Displays the WP Rotator. Go to Settings > WP Rotator to configure.', 'wp-rotator' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'rotator-widget' );
 
 		/* Create the widget. */
-		$this->WP_Widget( 'rotator-widget', 'WP Rotator', $widget_ops, $control_ops );
+		$this->WP_Widget( 'rotator-widget', __( 'WP Rotator', 'wp-rotator' ), $widget_ops, $control_ops );
 	}
 
 	function widget( $args, $instance ) {
 		extract( $args );
-		$title = apply_filters('widget_title', $instance['title'] );
+		$title = esc_attr( apply_filters('widget_title', $instance['title'] ) );
 
 		echo $before_widget;
 		do_action('wp_rotator');
@@ -39,11 +39,11 @@ class WP_Rotator_Widget extends WP_Widget {
 	function form( $instance ) {
 
 		/* Set up some default widget settings. */
-		$defaults = array( 'title' => 'Rotator' );
+		$defaults = array( 'title' => __( 'Rotator', 'wp-rotator' ) );
 		$instance = wp_parse_args( (array) $instance, $defaults ); ?>
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>">Title:</label>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'wp-rotator' );?></label>
 		<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" />
 		</p>
 		<?php

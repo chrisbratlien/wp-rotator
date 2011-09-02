@@ -19,6 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Textdomain-Support: yes"
 
+#: rotator-widget.php:19
 #: wp-rotator.php:87
 #: wp-rotator.php:95
 #@ wp-rotator
@@ -97,4 +98,19 @@ msgstr "Fade"
 #@ wp-rotator
 msgid "If you change this after uploading an image, use the <a href=\"%s\" target=\"_blank\">Regenerate Thumbnails</a> plugin to update images."
 msgstr "If you change this after uploading an image, use the <a href=\"%s\" target=\"_blank\">Regenerate Thumbnails</a> plugin to update images."
+
+#: rotator-widget.php:13
+#@ wp-rotator
+msgid "Displays the WP Rotator. Go to Settings > WP Rotator to configure."
+msgstr "Displays the WP Rotator. Go to Settings > WP Rotator to configure."
+
+#: rotator-widget.php:42
+#@ wp-rotator
+msgid "Rotator"
+msgstr "Rotator"
+
+#: rotator-widget.php:46
+#@ wp-rotator
+msgid "Title:"
+msgstr "Title:"
 
