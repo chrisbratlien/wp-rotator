@@ -114,3 +114,8 @@ msgstr "Rotator"
 msgid "Title:"
 msgstr "Title:"
 
+#: wp-rotator.php:107
+#@ wp-rotator
+msgid "Preview"
+msgstr "Preview"
+
