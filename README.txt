@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rotator, image, featured, javascript, slider, crossfade
 Requires at least: 2.9.2
 Tested up to: 3.0.4
-Stable tag: 0.3
+Stable tag: 0.4
 
 WP Rotator is a plugin designed for developers to quickly and easily create custom rotators.
 
@@ -29,15 +29,9 @@ do_action('wp_rotator');
 
 == Changelog ==
 
-= 0.2.1 =
-* fixed z-index issue affecting clickthrough URLs
-* Put Javascript into WPROTATOR namespace to prevent conflicts
-* added [wp_rotator] shortcode
-* added new filter hook: wp_rotator_featured_cell_markup to allow further customization
-* added customization hook examples to Admin page
-
-= 0.2.2 =
-* New hook wp_rotator_use_this_post for fine-grained control of which posts are included
+= 0.4 = 
+* Added localization. If you want a translation included, please email it to us.
+* Improved security.
 
 = 0.3 = 
 * Replaced our image sizing with add_image_size(). If you change the image, you need to use the Regenerate Thumbnails plugin to fix your thumbnails. Benefit of this method is images are scaled and cropped, rather than distorted to fit. For backwards compatibility, if the thumbnail doesn't match the dimensions of add_image_size() it distorts it to fit. 
@@ -49,6 +43,16 @@ do_action('wp_rotator');
 * Attached javascript to wp_footer and admin_footer rather than wp_head/admin_head
 * Replaced scrollTo.js with minified version
 * Moved the scrollTo reference out of the default javascript block, registered it as a script, and enqueued it (next to enqueue_script('jquery')).
+
+= 0.2.2 =
+* New hook wp_rotator_use_this_post for fine-grained control of which posts are included
+
+= 0.2.1 =
+* fixed z-index issue affecting clickthrough URLs
+* Put Javascript into WPROTATOR namespace to prevent conflicts
+* added [wp_rotator] shortcode
+* added new filter hook: wp_rotator_featured_cell_markup to allow further customization
+* added customization hook examples to Admin page
 
 
 == Upgrade Notice ==
