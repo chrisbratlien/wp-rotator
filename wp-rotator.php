@@ -3,7 +3,7 @@
 Plugin Name: WP Rotator
 Plugin URI: http://www.wprotator.com
 Description: Rotator for featured images or custom markup. Slide or crossfade. Posts chosen using query vars, just like query_posts() uses.
-Version: 0.4
+Version: 0.5
 Author: Chris Bratlien, Bill Erickson
 Author URI: http://www.wprotator.com/developers
 */
@@ -51,8 +51,13 @@ function wp_rotator_default($key) {
 
 function wp_rotator_option($key) {
   $options = get_option('wp_rotator_options');
+  
+  // Escape everything except the query vars, which are sanitized on save
   if (!empty($options[$key])) { 
-    return esc_attr( $options[$key] ); 
+  	if( 'query_vars' === $key )
+  		return $options[$key];
+  	else
+	    return esc_attr( $options[$key] ); 
   }
   else {
     return wp_rotator_default($key);
@@ -127,7 +132,7 @@ function wp_rotator_register_settings() {
 	}	
 	function wp_rotator_query_vars() {
 		$wp_rotator_options = get_option('wp_rotator_options');
-	 	echo '<input type="text" value="'. esc_attr( $wp_rotator_options['query_vars'] ) .'" name="wp_rotator_options[query_vars]" style="width: 500px;"> <a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">' . __( 'Help', 'wp-rotator' ) . '</a>';
+	 	echo '<input type="text" value="'. $wp_rotator_options['query_vars'] .'" name="wp_rotator_options[query_vars]" style="width: 500px;"> <a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">' . __( 'Help', 'wp-rotator' ) . '</a>';
 	}
 	function wp_rotator_animate_ms() {
 		$wp_rotator_options = get_option('wp_rotator_options');
@@ -160,7 +165,7 @@ function wp_rotator_register_settings() {
 		$reset_general = ( ! empty($input['reset-general']) ? true : false );
 		
 		if($submit_general) {
-			$valid_input['query_vars'] = $input['query_vars'];
+			$valid_input['query_vars'] = strip_tags( $input['query_vars'] );
 			$valid_input['animate_ms'] = (is_numeric($input['animate_ms']) ? $input['animate_ms'] : $valid_input['animate_ms']);
 			$valid_input['rest_ms'] = (is_numeric($input['rest_ms']) ? $input['rest_ms'] : $valid_input['rest_ms']);
 			$valid_input['animate_style'] = ('fade' == $input['animate_style'] ? 'fade' : 'slide');
@@ -427,7 +432,7 @@ function wp_rotator_markup() {
   $result .= '<div class="wp-rotator-wrap">';
   $result .= '  <div class="pane">';
   $result .= '    <ul class="elements" style="width: 5000px">';
-  $featured = new WP_Query( esc_attr( wp_rotator_option('query_vars') ) );
+  $featured = new WP_Query( wp_rotator_option('query_vars') );
   $inner = '';
   $first = true;
   while ($featured->have_posts()) : $featured->the_post(); 

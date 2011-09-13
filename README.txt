@@ -29,6 +29,9 @@ do_action('wp_rotator');
 
 == Changelog ==
 
+= 0.5 =
+* In 0.4 I broke the query_vars by making it "too" secure. This fixes query_vars so it works and is still secure.
+
 = 0.4 = 
 * Added localization. If you want a translation included, please email it to us.
 * Improved security.
