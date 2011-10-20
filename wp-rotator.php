@@ -442,6 +442,7 @@ function wp_rotator_markup() {
       $inner .= apply_filters('wp_rotator_featured_cell_markup','');
     }
   endwhile;
+  wp_reset_query(); // IMPORTANT so that main Loop $post var isn't disturbed
   $result .= $inner;
   $result .= '      </ul><!-- elements -->';
   $result .= '  	</div><!-- #feature_box_rotator .pane -->';

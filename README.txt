@@ -3,8 +3,8 @@ Contributors: chrisbratlien, billerickson
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MZGLG835MNV8L
 Tags: rotator, image, featured, javascript, slider, crossfade
 Requires at least: 2.9.2
-Tested up to: 3.0.4
-Stable tag: 0.4
+Tested up to: 3.2.1
+Stable tag: 0.6
 
 WP Rotator is a plugin designed for developers to quickly and easily create custom rotators.
 
@@ -28,6 +28,9 @@ Add the following PHP code to your template
 do_action('wp_rotator');
 
 == Changelog ==
+
+= 0.6 =
+* chrisbratlien: added back wp_reset_query() so that the main Loop $post var isn't disturbed. Comments were being overlooked on posts using [wp_rotator] shortcode
 
 = 0.5 =
 * In 0.4 I broke the query_vars by making it "too" secure. This fixes query_vars so it works and is still secure.
@@ -68,3 +71,6 @@ Added new hook called wp_rotator_use_this_post for providing fine-grained contro
 
 = 0.3 =
 Changed custom fields from url and show_info to wp_rotator_url and wp_rotator_show_info. It still checks for old ones to be backwards-compatible, but it's recommended to use the prefixed ones.
+
+= 0.6 =
+Fixes a bug which could disturb the main loop and cause post comments to be skipped over for rendering 
